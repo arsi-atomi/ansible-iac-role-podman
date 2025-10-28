@@ -1,0 +1,48 @@
+---
+###############################################################################
+#
+# present.yml
+#
+# @author Arsi Atomi
+#
+###############################################################################
+
+###############################################################################
+# SETTING VARIABLES
+###############################################################################
+
+
+###############################################################################
+# INSTALLING PODMAN
+###############################################################################
+
+- name: "Ensuring podman package is installed"
+  ansible.builtin.include_tasks: package_present.yml
+  vars:
+    iac_package: "podman"
+
+###############################################################################
+# ENSURING DEFAULT CONFIGURATION
+###############################################################################
+
+- name: "Rendering configuration lines"
+  ansible.builtin.set_fact:
+    rendered_lines: |
+      [network]
+      {% for item in podman_network_configuration | dict2items if item.value is not none %}
+      {% if item.value is string %}
+      {{ item.key }} = "{{ item.value }}"
+      {% else %}
+      {{ item.key }} = {{ item.value }}
+      {% endif %}
+      {% endfor %}
+  when: podman_network_configuration is defined
+
+- name: "Ensuring Podman configuration"
+  ansible.builtin.copy:
+    content: "{{ rendered_lines }}"
+    dest: "{{ podman_containers_conf }}"
+    mode: "0640"
+    owner: "root"
+    group: "root"
+  when: rendered_lines is defined
