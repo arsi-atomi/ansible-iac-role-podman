@@ -41,4 +41,8 @@
     {{ rendered_lines | default(omit) }}
     {{ podman_container_record.image }}
   changed_when: true
+  environment:
+    http_proxy: "{{ http_proxy | default(omit) }}"
+    https_proxy: "{{ https_proxy | default(omit) }}"
+    no_proxy: "{{ no_proxy | default(omit) }}"
   when: container_active.rc != 0
