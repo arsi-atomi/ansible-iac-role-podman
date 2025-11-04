@@ -11,6 +11,10 @@
 # CHECKING REQUIREMENTS
 ###############################################################################
 
+- name: "Checking if we are in container"
+  ansible.builtin.meta: end_play
+  when: ansible_virtualization_type in ["docker", "podman", "lxc"]
+
 - name: "Checking if operating system is supported"
   ansible.builtin.fail:
     msg: "Unsupported operating system: {{ ansible_distribution }} {{ ansible_distribution_major_version }}"
