@@ -1,0 +1,22 @@
+---
+servers:
+  hosts:
+    host.example.org:
+  vars:
+    iac_blueprint:
+      podman:
+        configuration:
+          network:
+            default_subnet: 10.168.0.0/24
+            default_gateway: 10.168.0.1
+        containers:
+          - image: "docker.io/ollama/ollama"
+            parameters:
+              name: "test-1"
+              hostname: "test-1"
+              ip: 10.168.0.100
+              publish: 11434:11434
+          - image: "docker.io/metabase/metabase"
+            parameters:
+              name: "testi-2"
+              ip: 10.168.0.101
