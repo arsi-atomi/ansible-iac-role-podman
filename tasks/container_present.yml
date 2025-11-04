@@ -18,7 +18,7 @@
     fail_msg: "All tests did not pass"
 
 ###############################################################################
-# 
+# ENSURING CONTAINER IS PRESENT
 ###############################################################################
 
 - name: "Rendering configuration lines"
@@ -29,8 +29,16 @@
       {% endfor %}
   when: podman_container_record.parameters is defined
 
+- name: "Checking container status"
+  ansible.builtin.command: podman inspect --format '{{ "{{ .State.Status }}" }}' {{ podman_container_record.parameters.name }}
+  register: container_active
+  changed_when: false
+  failed_when: false
+
 - name: "Ensuring container is present"
   ansible.builtin.shell: >
     podman create -it
     {{ rendered_lines | default(omit) }}
     {{ podman_container_record.image }}
+  changed_when: true
+  when: container_active.rc != 0

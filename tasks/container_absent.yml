@@ -18,9 +18,16 @@
     fail_msg: "All tests did not pass"
 
 ###############################################################################
-# 
+# ENSURING CONTAINER IS REMOVED
 ###############################################################################
 
+- name: "Checking container status"
+  ansible.builtin.command: podman inspect --format '{{ "{{ .State.Status }}" }}' {{ podman_container_record.parameters.name }}
+  register: container_active
+  changed_when: false
+  failed_when: false
+
 - name: "Ensuring container is absent"
-  ansible.builtin.shell: >
-    podman rm {{ podman_container_record.parameters.name }}
+  ansible.builtin.shell: podman rm {{ podman_container_record.parameters.name }}
+  changed_when: true
+  when: container_active.stdout == "exited"

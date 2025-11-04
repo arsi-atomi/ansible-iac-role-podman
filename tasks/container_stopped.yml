@@ -18,9 +18,17 @@
     fail_msg: "All tests did not pass"
 
 ###############################################################################
-# 
+# ENSURING CONTAINER IS STOPPED
 ###############################################################################
 
-- name: "Ensuring container is started"
+- name: "Checking container status"
+  ansible.builtin.command: podman inspect --format '{{ "{{ .State.Status }}" }}' {{ podman_container_record.parameters.name }}
+  register: container_active
+  changed_when: false
+  failed_when: false
+
+- name: "Ensuring container is stopped"
   ansible.builtin.shell: >
     podman stop {{ podman_container_record.parameters.name }}
+  changed_when: true
+  when: container_active.stdout == "running"
