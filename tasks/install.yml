@@ -1,0 +1,21 @@
+---
+###############################################################################
+#
+# install.yml
+#
+# @author Arsi Atomi
+#
+###############################################################################
+
+- name: "STATE: Ensure Podman installation is present"
+  ansible.builtin.include_tasks: present.yml
+
+- name: "STATE: Ensure container is present"
+  ansible.builtin.include_tasks: loop_containers.yml
+  vars:
+    task_state: "container_present"
+
+- name: "STATE: Ensure container is started"
+  ansible.builtin.include_tasks: loop_containers.yml
+  vars:
+    task_state: "container_started"

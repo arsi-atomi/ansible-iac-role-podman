@@ -1,0 +1,28 @@
+---
+###############################################################################
+#
+# loop_containers.yml
+#
+# @author Arsi Atomi
+#
+###############################################################################
+
+###############################################################################
+# SETTING VARIABLES
+###############################################################################
+
+- name: "Checking if required variables are defined"
+  ansible.builtin.assert:
+    that:
+      - podman_containers is defined
+    fail_msg: "All tests did not pass"
+
+###############################################################################
+# LOOPING THROUGH SITES TO BE ADDED
+###############################################################################
+
+- name: "Looping through containers"
+  ansible.builtin.include_tasks: "{{ task_state }}.yml"
+  loop: "{{ podman_containers }}"
+  loop_control:
+    loop_var: podman_container_record

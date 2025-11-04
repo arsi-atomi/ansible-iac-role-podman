@@ -1,0 +1,36 @@
+---
+###############################################################################
+#
+# container_present.yml
+#
+# @author Arsi Atomi
+#
+###############################################################################
+
+###############################################################################
+# SETTING VARIABLES
+###############################################################################
+
+- name: "Checking if required variables are defined"
+  ansible.builtin.assert:
+    that:
+      - podman_container_record is defined
+    fail_msg: "All tests did not pass"
+
+###############################################################################
+# 
+###############################################################################
+
+- name: "Rendering configuration lines"
+  ansible.builtin.set_fact:
+    rendered_lines: |
+      {% for item in podman_container_record.parameters | dict2items if item.value is not none %}
+      --{{ item.key }} {{ item.value }} \
+      {% endfor %}
+  when: podman_container_record.parameters is defined
+
+- name: "Ensuring container is present"
+  ansible.builtin.shell: >
+    podman create -it
+    {{ rendered_lines | default(omit) }}
+    {{ podman_container_record.image }}

@@ -1,0 +1,26 @@
+---
+###############################################################################
+#
+# container_started.yml
+#
+# @author Arsi Atomi
+#
+###############################################################################
+
+###############################################################################
+# SETTING VARIABLES
+###############################################################################
+
+- name: "Checking if required variables are defined"
+  ansible.builtin.assert:
+    that:
+      - podman_container_record is defined
+    fail_msg: "All tests did not pass"
+
+###############################################################################
+# 
+###############################################################################
+
+- name: "Ensuring container is started"
+  ansible.builtin.shell: >
+    podman start {{ podman_container_record.parameters.name }}

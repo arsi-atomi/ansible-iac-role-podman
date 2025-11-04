@@ -1,0 +1,21 @@
+---
+###############################################################################
+#
+# uninstall.yml
+#
+# @author Arsi Atomi
+#
+###############################################################################
+
+- name: "STATE: Ensure container is stopped"
+  ansible.builtin.include_tasks: loop_containers.yml
+  vars:
+    task_state: "container_stopped"
+
+- name: "STATE: Ensure container is absent"
+  ansible.builtin.include_tasks: loop_containers.yml
+  vars:
+    task_state: "container_absent"
+
+- name: "STATE: Ensure Podman installation is present"
+  ansible.builtin.include_tasks: absent.yml
