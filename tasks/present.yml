@@ -46,3 +46,13 @@
     owner: "root"
     group: "root"
   when: rendered_lines is defined
+
+###############################################################################
+# ENSURING FILESYSTEM CONFIGURATION
+###############################################################################
+
+- name: "Ensuring filesystem configuration is present"
+  ansible.builtin.include_tasks: fs_present.yml
+  when: iac_blueprint.podman.directories is defined
+  vars:
+    iac_directories: "{{ iac_blueprint.podman.directories | default([]) }}"

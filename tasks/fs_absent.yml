@@ -1,0 +1,33 @@
+---
+###############################################################################
+#
+# fs_absent.yml
+#
+# @author Arsi Atomi
+#
+###############################################################################
+
+###############################################################################
+# SETTING VARIABLES
+###############################################################################
+
+- name: "Checking if required variables are defined"
+  ansible.builtin.assert:
+    that:
+      - iac_directories is defined
+    fail_msg: "All tests did not pass"
+
+###############################################################################
+# LOOPING THROUGH DIRECTORIES
+###############################################################################
+
+- name: "Looping through directories"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: "absent"
+    owner: "{{ item.owner | default(omit) }}"
+    group: "{{ item.group | default(omit) }}"
+    mode: "{{ item.mode | default(omit) }}"
+  loop: "{{ iac_directories | default([]) }}"
+  loop_control:
+    label: "{{ item.path }}"
