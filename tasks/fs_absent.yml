@@ -8,16 +8,6 @@
 ###############################################################################
 
 ###############################################################################
-# SETTING VARIABLES
-###############################################################################
-
-- name: "Checking if required variables are defined"
-  ansible.builtin.assert:
-    that:
-      - iac_directories is defined
-    fail_msg: "All tests did not pass"
-
-###############################################################################
 # LOOPING THROUGH DIRECTORIES
 ###############################################################################
 
@@ -25,9 +15,17 @@
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: "absent"
-    owner: "{{ item.owner | default(omit) }}"
-    group: "{{ item.group | default(omit) }}"
-    mode: "{{ item.mode | default(omit) }}"
-  loop: "{{ iac_directories | default([]) }}"
+  loop: "{{ iac_fs_directories | default([]) }}"
   loop_control:
     label: "{{ item.path }}"
+
+- name: "Writing files from inline content"
+  ansible.builtin.file:
+    path: "{{ f.path }}"
+    state: "absent"
+  loop: "{{ iac_fs_files | default([]) }}"
+  when:
+    - (iac_fs_files | default([])) | length > 0
+  loop_control:
+    loop_var: f
+    label: "{{ f.path }}"

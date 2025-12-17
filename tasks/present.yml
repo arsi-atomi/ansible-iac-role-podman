@@ -55,4 +55,5 @@
   ansible.builtin.include_tasks: fs_present.yml
   when: iac_blueprint.podman.directories is defined
   vars:
-    iac_directories: "{{ iac_blueprint.podman.directories | default([]) }}"
+    iac_fs_directories: "{{ iac_blueprint.podman.directories | default([]) }}"
+    iac_fs_files: "{{ iac_blueprint.podman.files | default([]) }}"
