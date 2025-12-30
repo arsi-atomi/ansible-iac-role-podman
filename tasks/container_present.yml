@@ -25,7 +25,13 @@
   ansible.builtin.set_fact:
     rendered_lines: |
       {% for item in podman_container_record.parameters | dict2items if item.value is not none %}
+      {% if item.key == 'volume' and item.value is iterable and item.value is not string %}
+      {% for volume in item.value %}
+      --{{ item.key }} "{{ volume }}" \
+      {% endfor %}
+      {% else %}
       --{{ item.key }} {{ item.value }} \
+      {% endif %}
       {% endfor %}
   when: podman_container_record.parameters is defined
 
